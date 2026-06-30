@@ -1,0 +1,25 @@
+# Virtual Environment
+venv/
+
+# Environment Variables
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+
+# SQLite Database
+db.sqlite3
+
+# User Uploaded Media
+media/
+
+# Collected Static Files
+staticfiles/
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db

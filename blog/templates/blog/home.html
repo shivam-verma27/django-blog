@@ -1,0 +1,93 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<a href="{% url 'create_post' %}"> Create Post </a>
+<form method="GET">
+  <input type="text" name="q" placeholder="Search posts" />
+
+  <button type="submit">Search</button>
+</form>
+
+<br />
+<h3>Categories</h3>
+
+<a href="/">All Posts</a>
+
+{% for category in categories %}
+
+    <a href="?category={{ category.name }}">
+        {% if selected_category == category.name %}
+            <strong>{{ category.name }}</strong>
+        {% else %}
+            {{ category.name }}
+        {% endif %}
+    </a>
+
+{% endfor %}
+<hr>
+<h2>🔥 Popular Posts</h2>
+
+<ol>
+    {% for post in popular_posts %}
+        <li>
+            <a href="{% url 'post_detail' post.id %}">
+                {{ post.title }}
+            </a>
+            (👁 {{ post.views }})
+        </li>
+    {% endfor %}
+</ol>
+
+<hr>
+{% for post in posts %}
+<div class="post">
+  <a href="{% url 'post_detail' post.id %}">
+    <h2>{{ post.title }}</h2>
+  </a>
+
+  <p>{{ post.content }}</p>
+  <p>
+    Categories:
+    {% for category in post.categories.all %}
+        <a href="?category={{ category.name }}">
+            {{ category.name }}
+        </a>
+    {% empty %}
+        No Category
+    {% endfor %}
+</p>
+  <p>
+    By
+    <a href="{% url 'public_profile' post.author.username %}">
+      {{ post.author }}
+    </a>
+  </p>
+  <p>Created at: {{ post.created_at|date:"d M, Y" }}</p>
+  <p>Updated at: {{ post.updated_at|date:"d M, Y" }}</p>
+  <p>Views : {{ post.views }}</p>
+  <p>❤️ Likes: {{ post.likes.count }}</p>
+  <p>💬 Comments: {{ post.comment_set.count }}</p>
+
+  {% if post.author == request.user %}
+  <a href="{% url 'update_post' post.id %}"> Update </a>
+
+  <a href="{% url 'delete_post' post.id %}"> Delete </a>
+  {% endif %}
+</div>
+{% empty %}
+
+<h3>No posts found.</h3>
+
+{% endfor %}
+<hr />
+
+{% if posts.has_previous %}
+<a href="?q={{ request.GET.q }}&page={{ posts.previous_page_number }}">
+  Previous
+</a>
+{% endif %}
+
+<span> Page {{ posts.number }} of {{ posts.paginator.num_pages }} </span>
+
+{% if posts.has_next %}
+<a href="?q={{ request.GET.q }}&page={{ posts.next_page_number }}"> Next </a>
+{% endif %} {% endblock %}

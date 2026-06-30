@@ -1,0 +1,65 @@
+{% extends 'blog/base.html' %} {% block content %}
+
+<div class="post">
+  <h1>{{ post.title }}</h1>
+
+  <p>
+    By
+    <a href="{% url 'public_profile' post.author.username %}">
+      {{ post.author }}
+    </a>
+  </p>
+
+  <p>{{ post.content }}</p>
+  
+  <p>
+    Categories: {% for category in post.categories.all %}
+    <a href="?category={{ category.name }}"> {{ category.name }} </a>
+    {% empty %}
+        No Category
+    {% endfor %}
+  </p>
+  <p>Views : {{ post.views }}</p>
+  <p>Likes: {{ post.likes.count }}</p>
+  <form method="POST" action="{% url 'toggle_like' post.id %}">
+    {% csrf_token %}
+    <button type="submit">
+      {% if user in post.likes.all %} Unlike {% else %} Like {% endif %}
+    </button>
+  </form>
+
+  <p>Created: {{ post.created_at|date:"d M Y" }}</p>
+</div>
+
+<hr />
+<hr />
+
+<h2>Add Comment</h2>
+
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+
+  <button type="submit">Add Comment</button>
+</form>
+
+<hr />
+
+<h2>Comments</h2>
+
+{% for comment in comments %}
+
+<div>
+  <strong> {{ comment.author }} </strong>
+
+  <small> {{ comment.created_at|date:"d M Y" }} </small>
+
+  <p>{{ comment.content }}</p>
+</div>
+
+<hr />
+
+{% empty %}
+
+<p>No comments yet.</p>
+
+{% endfor %} {% endblock %}
